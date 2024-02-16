@@ -58,7 +58,7 @@ pub fn env_map_to_string(env_map: &HashMap<String, String>) -> String {
     env_string
 }
 
-pub fn generate_env_file(custom_env_file_path: Option<PathBuf>) -> Result<(), Error> {
+pub fn generate_env_file(custom_env_file_path: &Option<PathBuf>) -> Result<(), Error> {
     let root_folder: PathBuf = env::current_dir().expect("Unable to get current directory");
     let env_file_path = root_folder.join(".env");
     let state_path = root_folder.join("state");
