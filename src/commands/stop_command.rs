@@ -1,5 +1,5 @@
-use color_eyre::eyre;
 use crate::{args::Command, components::spinner};
+use color_eyre::eyre;
 pub struct StopCommand;
 
 impl Command for StopCommand {

@@ -46,7 +46,7 @@ impl DebugCommand {
         println!("\n--- {} ---", "Settings.json".blue());
         let settings_file_path = current_dir.join("state").join("settings.json");
 
-        let json_string = std::fs::read_to_string(&settings_file_path).unwrap_or_default();
+        let json_string = std::fs::read_to_string(settings_file_path).unwrap_or_default();
         let parsed_json: Value = serde_json::from_str(&json_string).unwrap_or_default();
 
         // Pretty print the JSON
@@ -62,7 +62,7 @@ impl DebugCommand {
         table.set_format(*format::consts::FORMAT_BOX_CHARS);
 
         let env_file_path = current_dir.join(".env");
-        let env_file = std::fs::read_to_string(&env_file_path).unwrap_or_default();
+        let env_file = std::fs::read_to_string(env_file_path).unwrap_or_default();
         let env_map = env_string_to_map(env_file.as_str());
 
         let pg_password = env_map
@@ -135,12 +135,12 @@ impl DebugCommand {
                 if output.status.success() {
                     let containers = String::from_utf8_lossy(&output.stdout);
                     let containers = containers
-                        .split("\n")
+                        .split('\n')
                         .filter(|s| !s.is_empty())
                         .map(|s| s.to_string())
                         .collect::<Vec<String>>();
                     for container in containers {
-                        let array = container.split(" ").collect::<Vec<&str>>();
+                        let array = container.split(' ').collect::<Vec<&str>>();
 
                         let status = if array[1].contains("Up") { array[1].green() } else { array[1].red() };
 

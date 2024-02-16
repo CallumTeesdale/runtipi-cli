@@ -2,6 +2,7 @@ use hex::encode;
 
 use sha2::{Digest, Sha256};
 use std::io::{Error, ErrorKind, Write};
+use std::path::Path;
 use std::{env, fs};
 use std::{fs::File, path::PathBuf};
 
@@ -38,10 +39,9 @@ pub fn get_internal_ip() -> String {
     "0.0.0.0".to_string()
 }
 
-pub fn get_seed(root_folder: &PathBuf) -> String {
+pub fn get_seed(root_folder: &Path) -> String {
     let seed_file_path = root_folder.join("state").join("seed");
-    let seed = std::fs::read_to_string(&seed_file_path).unwrap_or_default();
-    seed
+    std::fs::read_to_string(seed_file_path).unwrap_or_default()
 }
 
 pub fn derive_entropy(entropy: &str, seed: &String) -> String {

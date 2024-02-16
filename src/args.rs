@@ -1,11 +1,6 @@
-
-use std::str::FromStr;
-
 use clap::{Parser, Subcommand};
 
-use crate::commands::{self, app::AppCommand, start::StartCommand, update::UpdateCommand};
-
-
+use crate::commands::{self, app::app_command::AppCommand, start_command::StartCommand, update_command::UpdateCommand};
 
 pub trait Command {
     fn run(&self) -> color_eyre::Result<()>;
@@ -40,15 +35,12 @@ impl RuntipiMainCommand {
     pub fn run(&self) -> color_eyre::Result<()> {
         match self {
             Self::Start(args) => args.run(),
-            Self::Stop => commands::stop::StopCommand.run(),
+            Self::Stop => commands::stop_command::StopCommand.run(),
             Self::Restart(args) => args.run(),
             Self::Update(args) => args.run(),
             Self::App(args) => args.run(),
-            Self::ResetPassword => commands::reset_password::ResetPasswordCommand.run(),
-            Self::Debug => commands::debug::DebugCommand.run(),
+            Self::ResetPassword => commands::reset_password_command::ResetPasswordCommand.run(),
+            Self::Debug => commands::debug_command::DebugCommand.run(),
         }
     }
 }
-
-
-

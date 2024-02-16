@@ -16,7 +16,7 @@ pub fn get_env_map() -> HashMap<String, String> {
     let root_folder: PathBuf = env::current_dir().expect("Unable to get current directory");
     let env_file_path = root_folder.join(".env");
 
-    let env_file = std::fs::read_to_string(&env_file_path).expect("Unable to read .env file");
+    let env_file = std::fs::read_to_string(env_file_path).expect("Unable to read .env file");
     env_string_to_map(&env_file)
 }
 
@@ -150,7 +150,7 @@ pub fn generate_env_file(custom_env_file_path: &Option<PathBuf>) -> Result<(), E
     );
 
     if let Some(custom_env_file_path) = custom_env_file_path {
-        let custom_env_file = std::fs::read_to_string(&custom_env_file_path)?;
+        let custom_env_file = std::fs::read_to_string(custom_env_file_path)?;
 
         let custom_env_map = env_string_to_map(&custom_env_file);
 

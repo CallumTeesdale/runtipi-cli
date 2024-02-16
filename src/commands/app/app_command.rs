@@ -85,7 +85,7 @@ impl Command for AppCommand {
                     }
                     Err(err) => {
                         spin.fail("Failed to start app.");
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 spin.finish();
@@ -106,7 +106,7 @@ impl Command for AppCommand {
                     }
                     Err(err) => {
                         spin.fail("Failed to stop app.");
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 spin.finish();
@@ -127,7 +127,7 @@ impl Command for AppCommand {
                     }
                     Err(err) => {
                         spin.fail("Failed to uninstall app.");
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 spin.finish();
@@ -151,7 +151,7 @@ impl Command for AppCommand {
                     Err(err) => {
                         spin.fail("Failed to reset app.");
                         spin.finish();
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 Ok(())
@@ -174,7 +174,7 @@ impl Command for AppCommand {
                     Err(err) => {
                         spin.fail("Failed to update app.");
                         spin.finish();
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 Ok(())
@@ -182,7 +182,7 @@ impl Command for AppCommand {
             AppSubcommand::StartAll(_) => {
                 let spin = spinner::new("Starting all apps...");
                 let api_response = api_request(format!("{}/{}", base_url, "start-all"));
-                let error_message = format!("Failed to start apps. See logs/error.log for more details.");
+                let error_message = "Failed to start apps. See logs/error.log for more details.".to_string();
 
                 match api_response {
                     Ok(response) => {
@@ -197,7 +197,7 @@ impl Command for AppCommand {
                     Err(err) => {
                         spin.fail("Failed to start apps.");
                         spin.finish();
-                        println!("{}", format!("Error: {}", err));
+                        println!("Error: {}", err);
                     }
                 }
                 Ok(())

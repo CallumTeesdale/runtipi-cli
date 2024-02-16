@@ -66,8 +66,8 @@ pub struct UpdateCommand {
 }
 
 fn is_major_bump(current_version: &str, new_version: &str) -> bool {
-    let current_version = current_version.split(".").collect::<Vec<&str>>();
-    let new_version = new_version.split(".").collect::<Vec<&str>>();
+    let current_version = current_version.split('.').collect::<Vec<&str>>();
+    let new_version = new_version.split('.').collect::<Vec<&str>>();
 
     if current_version[0] < new_version[0] {
         return true;
@@ -115,7 +115,7 @@ impl Command for UpdateCommand {
 
         let env_map = env::get_env_map();
 
-        let current_version = env_map.get("TIPI_VERSION").unwrap().replace("v", "");
+        let current_version = env_map.get("TIPI_VERSION").unwrap().replace('v', "");
         if is_major_bump(&current_version, &wanted_version) {
             spin.fail("You are trying to update to a new major version. Please update manually using the update instructions on the website. https://runtipi.io/docs/reference/breaking-updates");
             spin.finish();
@@ -192,8 +192,8 @@ impl Command for UpdateCommand {
         spin.succeed("Extracted tarball");
 
         // asset.name with no extension
-        let bin_name = asset.name.split(".").collect::<Vec<&str>>()[0];
-        let new_executable_path = current_dir.join(&bin_name);
+        let bin_name = asset.name.split('.').collect::<Vec<&str>>()[0];
+        let new_executable_path = current_dir.join(bin_name);
 
         spin.set_message("Replacing old CLI");
         std::process::Command::new("chmod").arg("+x").arg(&new_executable_path);
@@ -220,9 +220,18 @@ impl Command for UpdateCommand {
 
         let env_file = self.env_file.clone();
 
-        if env_file.is_some() {
+        if let Some(env_file) = env_file.clone() {
+            if !env_file.exists() {
+                spin.fail("Env file does not exist");
+                spin.finish();
+                return Err(eyre::eyre!("Env file does not exist"));
+            }
+
+            let env_file = env_file.canonicalize().unwrap();
+            let env_file = env_file.to_str().unwrap();
+            let env_file = env_file.to_string();
             run_args.push("--env-file".to_string());
-            run_args.push(env_file.unwrap().display().to_string());
+            run_args.push(env_file);
         }
 
         // Run command start on new CLI
@@ -246,20 +255,15 @@ impl Command for UpdateCommand {
         println!("\n");
 
         let ip_and_port = format!(
-            "Visit http://{}:{} to access the dashboard",
+            "Visit http://{}:{} to access the dashboard\n\nYou are now running version {}\n\nTipi is entirely written in TypeScript and we are looking for contributors!",
             env_map.get("INTERNAL_IP").unwrap(),
-            env_map.get("NGINX_PORT").unwrap()
+            env_map.get("NGINX_PORT").unwrap(),
+            release.version
         );
 
         let box_title = "Runtipi started successfully".to_string();
-        let box_body = format!(
-            "{}\n\n{}\n\n{}",
-            ip_and_port,
-            format!("You are now running version {}", release.version),
-            "Tipi is entirely written in TypeScript and we are looking for contributors!"
-        );
 
-        let console_box = ConsoleBox::new(box_title, box_body, 80, "green".to_string());
+        let console_box = ConsoleBox::new(box_title, ip_and_port, 80, "green".to_string());
         console_box.print();
         Ok(())
     }
