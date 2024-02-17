@@ -1498,6 +1498,7 @@ dependencies = [
  "sha2",
  "sys-info",
  "tempfile",
+ "throbber-widgets-tui",
 ]
 
 [[package]]
@@ -1952,6 +1953,16 @@ checksum = "3fdd6f064ccff2d6567adcb3873ca630700f00b5ad3f060c25b5dcfd9a4ce152"
 dependencies = [
  "cfg-if",
  "once_cell",
+]
+
+[[package]]
+name = "throbber-widgets-tui"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b2c457ba56303a9a3648a6baca52bacd1c65095fa6693b542f7d5df5ab052f6"
+dependencies = [
+ "rand",
+ "ratatui",
 ]
 
 [[package]]

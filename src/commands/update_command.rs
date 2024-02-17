@@ -1,5 +1,6 @@
 use clap::Args;
 use color_eyre::eyre;
+use ratatui::backend::Backend;
 use reqwest::blocking::Client;
 use semver::{Error as SemverError, Version};
 use std::path::PathBuf;
@@ -77,7 +78,7 @@ fn is_major_bump(current_version: &str, new_version: &str) -> bool {
 }
 
 impl Command for UpdateCommand {
-    fn run(&self) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
         let spin = spinner::new("");
 
         spin.set_message("Grabbing releases from GitHub");

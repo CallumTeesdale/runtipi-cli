@@ -5,7 +5,51 @@ use crossterm::{
 use ratatui::prelude::*;
 use std::{io::stdout, panic};
 
-pub fn init_terminal() -> color_eyre::Result<Terminal<impl Backend>> {
+use super::{app::App, event_handler::EventHandler, ui};
+
+pub type CrosstermTerminal =
+    ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>;
+
+pub struct Tui {
+    terminal: CrosstermTerminal,
+    pub events: EventHandler,
+}
+
+
+impl Tui {
+    pub fn new() -> color_eyre::Result<Self> {
+        let terminal = init_terminal()?;
+        let events = EventHandler::new(250);
+        Ok(Self { terminal, events })
+    }
+
+
+    pub fn draw(&mut self, app: &mut App) -> color_eyre::Result<()> {
+        self.terminal.draw(|frame| ui::render(app, frame))?;
+        Ok(())
+    }
+
+    pub fn enter(&mut self) -> color_eyre::Result<()> {
+        self.terminal.backend_mut().clear()?;
+        self.terminal.backend_mut().flush()?;
+        Ok(())
+    }
+
+
+    pub fn reset(&mut self) -> color_eyre::Result<()> {
+        self.terminal.backend_mut().clear()?;
+        self.terminal.backend_mut().flush()?;
+        Ok(())
+    }
+
+
+    pub fn exit(&mut self) -> color_eyre::Result<()> {
+        restore_terminal()?;
+        Ok(())
+    }
+}
+
+pub fn init_terminal() -> color_eyre::Result<CrosstermTerminal> {
     enable_raw_mode()?;
     stdout().execute(EnterAlternateScreen)?;
     let terminal = Terminal::new(CrosstermBackend::new(stdout()))?;

@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::components::spinner;
 use reqwest::blocking::{Client, Response};
+use ratatui::backend::Backend;
 
 #[derive(Debug, Args)]
 pub struct AppCommand {
@@ -66,7 +67,7 @@ pub struct UpdateApp {
 pub struct StartAll {}
 
 impl Command for AppCommand {
-    fn run(&self) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
         let base_url = "http://localhost/worker-api/apps";
 
         match &self.subcommand {

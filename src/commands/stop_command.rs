@@ -1,9 +1,10 @@
 use crate::{args::Command, components::spinner};
 use color_eyre::eyre;
+use ratatui::backend::Backend;
 pub struct StopCommand;
 
 impl Command for StopCommand {
-    fn run(&self) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
         let spin = spinner::new("");
 
         spin.set_message("Stopping containers...");

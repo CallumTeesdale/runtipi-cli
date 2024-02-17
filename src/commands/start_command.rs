@@ -1,8 +1,10 @@
 use std::env::current_dir;
+use std::f64::consts::E;
 use std::path::PathBuf;
 
 use clap::Parser;
-use color_eyre::eyre;
+use color_eyre::{eyre, Section};
+use ratatui::backend::Backend;
 
 use crate::args::Command;
 use crate::components::console_box::ConsoleBox;
@@ -20,16 +22,16 @@ pub struct StartCommand {
 }
 
 impl Command for StartCommand {
-    fn run(&self) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
         let spin = spinner::new("");
-
         // User permissions
         spin.set_message("Checking user permissions");
 
         if let Err(e) = system::ensure_docker() {
             spin.fail(e.to_string().as_str());
             spin.finish();
-            return Err(eyre::eyre!("Failed to check user permissions"));
+            return Err(eyre::eyre!("Failed to check user permissions")
+            .suggestion("Please ensure that you have Docker installed and running"));
         }
 
         spin.succeed("User permissions are ok");
@@ -41,7 +43,8 @@ impl Command for StartCommand {
             spin.fail("Failed to copy system files");
             spin.finish();
             println!("\nError: {}", e);
-            return Err(eyre::eyre!("Failed to copy system files"));
+            return Err(eyre::eyre!("Failed to copy system files")
+            .suggestion("Please ensure that you have the required permissions to copy system files"));
         }
         spin.succeed("Copied system files");
 
@@ -52,7 +55,10 @@ impl Command for StartCommand {
             spin.fail("Failed to generate .env file");
             spin.finish();
             println!("\nError: {}", e);
-            return Err(eyre::eyre!("Failed to generate .env file"));
+            return Err(eyre::eyre!("Failed to generate .env file")
+            .with_section(|| format!("Error: {}", e))
+            .suggestion("Please ensure that you have the required permissions to generate the .env file")
+        );
         }
         let env_map = env::get_env_map();
 

@@ -1,14 +1,15 @@
 use colored::Colorize;
 
 use prettytable::{format, row, Table};
+use ratatui::backend::Backend;
 use serde_json::{to_string_pretty, Value};
 
-use crate::utils::{env::env_string_to_map, system::get_architecture};
+use crate::{args::Command, utils::{env::env_string_to_map, system::get_architecture}};
 
 pub struct DebugCommand;
 
-impl DebugCommand {
-    pub fn run(&self) -> color_eyre::Result<()> {
+impl Command for DebugCommand {
+     fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
         println!("⚠️ Make sure you have started tipi before running this command\n");
         // Gather system information
         let os = std::env::consts::OS;
