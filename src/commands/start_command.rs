@@ -5,10 +5,12 @@ use std::path::PathBuf;
 use clap::Parser;
 use color_eyre::{eyre, Section};
 use ratatui::backend::Backend;
+use ratatui::layout::{Constraint, Direction, Layout};
 
 use crate::args::Command;
 use crate::components::console_box::ConsoleBox;
 use crate::components::spinner;
+use crate::terminal::tui::Tui;
 use crate::utils::{env, system};
 
 #[derive(Parser, Debug)]
@@ -22,10 +24,22 @@ pub struct StartCommand {
 }
 
 impl Command for StartCommand {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
-        let spin = spinner::new("");
+    fn run(&self, terminal: &mut Tui) -> color_eyre::Result<()> {
+        let spin = spinner::new("TESTING...");
         // User permissions
-        spin.set_message("Checking user permissions");
+        terminal.terminal.clear()?;
+        terminal.terminal.draw(|frame| {
+            let chunks = Layout::default()
+                .direction(Direction::Horizontal)
+                .margin(1)
+                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                .split(frame.size());
+
+            // Simple random step
+            let simple = throbber_widgets_tui::Throbber::default();
+            frame.render_widget(simple, chunks[0]);
+        })?;
+
 
         if let Err(e) = system::ensure_docker() {
             spin.fail(e.to_string().as_str());
@@ -43,8 +57,9 @@ impl Command for StartCommand {
             spin.fail("Failed to copy system files");
             spin.finish();
             println!("\nError: {}", e);
-            return Err(eyre::eyre!("Failed to copy system files")
-            .suggestion("Please ensure that you have the required permissions to copy system files"));
+            return Err(
+                eyre::eyre!("Failed to copy system files").suggestion("Please ensure that you have the required permissions to copy system files")
+            );
         }
         spin.succeed("Copied system files");
 
@@ -56,9 +71,8 @@ impl Command for StartCommand {
             spin.finish();
             println!("\nError: {}", e);
             return Err(eyre::eyre!("Failed to generate .env file")
-            .with_section(|| format!("Error: {}", e))
-            .suggestion("Please ensure that you have the required permissions to generate the .env file")
-        );
+                .with_section(|| format!("Error: {}", e))
+                .suggestion("Please ensure that you have the required permissions to generate the .env file"));
         }
         let env_map = env::get_env_map();
 

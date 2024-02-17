@@ -1,6 +1,6 @@
 use std::io::Error;
 
-use crate::args::Command;
+use crate::{args::Command, terminal::tui::Tui};
 use crate::utils::env::get_env_value;
 use clap::{Args, Subcommand};
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
@@ -67,7 +67,7 @@ pub struct UpdateApp {
 pub struct StartAll {}
 
 impl Command for AppCommand {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &mut Tui) -> color_eyre::Result<()> {
         let base_url = "http://localhost/worker-api/apps";
 
         match &self.subcommand {

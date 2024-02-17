@@ -1,3 +1,4 @@
+use color_eyre::eyre::{self, anyhow};
 use hex::encode;
 
 use sha2::{Digest, Sha256};
@@ -52,24 +53,20 @@ pub fn derive_entropy(entropy: &str, seed: &String) -> String {
     encode(result)
 }
 
-pub fn ensure_docker() -> Result<(), Error> {
+pub fn ensure_docker() -> color_eyre::Result<()> {
     let output = std::process::Command::new("docker").arg("--version").output().map_err(|e| e.to_string());
 
     match output {
         Ok(output) => {
             if !output.status.success() {
-                return Err(Error::new(
-                    ErrorKind::Other,
+                return Err(eyre::eyre!(
                     "Docker is not installed or user has not the right permissions. See https://docs.docker.com/engine/install/ for more information"
-                        .to_string(),
                 ));
             }
         }
         Err(_) => {
-            return Err(Error::new(
-                ErrorKind::Other,
+            return Err(eyre::eyre!(
                 "Docker is not installed or user has not the right permissions. See https://docs.docker.com/engine/install/ for more information"
-                    .to_string(),
             ));
         }
     }
@@ -79,16 +76,14 @@ pub fn ensure_docker() -> Result<(), Error> {
     match output {
         Ok(output) => {
             if !output.status.success() {
-                return Err(Error::new(
-                    ErrorKind::Other,
-                    "Docker compose plugin is not installed. See https://docs.docker.com/compose/install/linux/ for more information".to_string(),
+                return Err(eyre::eyre!(
+                    "Docker compose plugin is not installed. See https://docs.docker.com/compose/install/linux/ for more information"
                 ));
             }
         }
         Err(_) => {
-            return Err(Error::new(
-                ErrorKind::Other,
-                "Docker compose plugin is not installed. See https://docs.docker.com/compose/install/linux/ for more information".to_string(),
+            return Err(eyre::eyre!(
+                "Docker compose plugin is not installed. See https://docs.docker.com/compose/install/linux/ for more information"
             ));
         }
     }

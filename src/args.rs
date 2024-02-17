@@ -1,10 +1,10 @@
 use clap::{Parser, Subcommand};
 use ratatui::backend::Backend;
 
-use crate::commands::{self, app::app_command::AppCommand, start_command::StartCommand, update_command::UpdateCommand};
+use crate::{commands::{self, app::app_command::AppCommand, start_command::StartCommand, update_command::UpdateCommand}, terminal::tui::Tui};
 
 pub trait Command {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()>;
+    fn run(&self, terminal: &mut Tui) -> color_eyre::Result<()>;
 }
 
 #[derive(Debug, Parser)]
@@ -45,7 +45,7 @@ pub fn get_all_command_strings() -> Vec<String> {
 }
 
 impl Command for RuntipiMainCommand {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
+    fn run(&self, terminal:  &mut Tui) -> color_eyre::Result<()> {
         match self {
             Self::Start(args) => args.run(terminal),
             Self::Stop => commands::stop_command::StopCommand.run(terminal),

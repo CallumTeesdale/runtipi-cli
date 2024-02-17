@@ -9,6 +9,7 @@ use std::{env::current_dir, fs::File};
 
 use crate::args::Command;
 use crate::components::console_box::ConsoleBox;
+use crate::terminal::tui::Tui;
 use crate::utils::env;
 use crate::{components::spinner, utils::system::get_architecture};
 use self_update::self_replace::self_replace;
@@ -78,7 +79,7 @@ fn is_major_bump(current_version: &str, new_version: &str) -> bool {
 }
 
 impl Command for UpdateCommand {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &mut Tui) -> color_eyre::Result<()> {
         let spin = spinner::new("");
 
         spin.set_message("Grabbing releases from GitHub");

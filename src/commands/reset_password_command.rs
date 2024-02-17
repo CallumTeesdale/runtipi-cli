@@ -5,11 +5,12 @@ use std::env;
 use std::{fs::File, path::PathBuf};
 
 use crate::args::Command;
+use crate::terminal::tui::Tui;
 
 pub struct ResetPasswordCommand;
 
 impl Command for ResetPasswordCommand {
-    fn run(&self, terminal: &ratatui::terminal::Terminal<impl Backend>) -> color_eyre::Result<()> {
+    fn run(&self, terminal: &mut Tui) -> color_eyre::Result<()> {
         let root_folder: PathBuf = env::current_dir().expect("Unable to get current directory");
         let reset_password_request = File::create(root_folder.join("state").join("password-change-request"));
 

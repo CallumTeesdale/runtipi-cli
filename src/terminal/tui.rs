@@ -11,7 +11,7 @@ pub type CrosstermTerminal =
     ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>;
 
 pub struct Tui {
-    terminal: CrosstermTerminal,
+    pub terminal: CrosstermTerminal,
     pub events: EventHandler,
 }
 
@@ -28,7 +28,7 @@ impl Tui {
         self.terminal.draw(|frame| ui::render(app, frame))?;
         Ok(())
     }
-
+    
     pub fn enter(&mut self) -> color_eyre::Result<()> {
         self.terminal.backend_mut().clear()?;
         self.terminal.backend_mut().flush()?;
